@@ -4,35 +4,37 @@ using Microsoft.AspNetCore.Mvc;
 using UniversityRegistrar.Models;
 using System.Collections.Generic;
 using System.Linq;
-
 namespace UniversityRegistrar.Controllers;
 
-public class CoursesController : Controller
+public class DepartmentsController : Controller
 {
   private readonly UniversityRegistrarContext _db;
-  public CoursesController(UniversityRegistrarContext db)
+  public DepartmentsController(UniversityRegistrarContext db)
   {
     _db = db;
   }
-
   public ActionResult Index()
   {
-    List<Course> model = _db.Courses
-      .Include(course => course.Department)
-      .ToList();
+    List<Department> model = _db.Departments.ToList();
     return View(model);
-    // return View();
   }
   public ActionResult Create()
   {
-    ViewBag.DepartmentId = new SelectList(_db.Departments, "DepartmentId", "DepartmentName");
     return View();
   }
   [HttpPost]
-  public ActionResult Create(Course course)
+  public ActionResult Create(Department department)
   {
-    _db.Courses.Add(course);
+    _db.Departments.Add(department);
     _db.SaveChanges();
     return RedirectToAction("Index");
   }
+  public ActionResult Details(int id)
+  {
+    Department dept = _db.Departments
+      .Include(dept => dept.Courses)
+      .FirstOrDefault(dept => dept.DepartmentId == id);
+    return View(dept);
+  }
 }
+

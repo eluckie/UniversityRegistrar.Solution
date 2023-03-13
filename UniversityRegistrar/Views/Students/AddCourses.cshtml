@@ -1,0 +1,17 @@
+@{
+  Layout = "_Layout";
+}
+@model UniversityRegistrar.Models.Student;
+@using UniversityRegistrar.Models;
+
+<h2>Select Courses to Add for @Model.Name</h2>
+@using (Html.BeginForm())
+{
+  @Html.HiddenFor(model=>model.StudentId)
+  @foreach (Course item in ViewBag.Courses)
+  {
+    @item.Department.DepartmentName @item.CourseName @Html.CheckBox($"{@item.CourseName}", @item.CourseId);
+    <br>
+  }
+  <input type="submit" value="Lets do dis">
+}

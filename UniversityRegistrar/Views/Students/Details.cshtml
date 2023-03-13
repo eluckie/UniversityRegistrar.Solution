@@ -1,0 +1,21 @@
+@{
+  Layout = "_Layout";
+}
+
+@using UniversityRegistrar.Models;
+@model UniversityRegistrar.Models.Student;
+
+<h2>@Model.Name</h2>
+<ul>
+  <li>Enrolled: @Model.DateOfEnrollment.ToString("d")</li>
+  <li>Major: @Model.Major.DepartmentName</li>
+  <li>Courses:<ul>
+  @foreach (Enrollment item in Model.Enrollments)
+  {
+    <li>@item.Course.CourseName : @item.Course.Department.DepartmentName</li>
+  }
+  </ul></li>
+
+</ul>
+
+@Html.ActionLink("Add Courses for this Student", "AddCourses", "Students", new { id = @Model.StudentId});

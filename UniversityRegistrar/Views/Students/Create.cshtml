@@ -1,0 +1,19 @@
+@{
+  Layout = "_Layout";
+}
+
+<h4>Nu student add!</h4>
+
+@model UniversityRegistrar.Models.Student;
+@using (Html.BeginForm())
+{
+  @Html.LabelFor(model => model.Name)
+  @Html.EditorFor(model => model.Name)
+  <br>
+  @Html.LabelFor(model => model.DateOfEnrollment)
+  @Html.EditorFor(model => model.DateOfEnrollment)
+  <br>
+  @Html.DropDownList("DepartmentId")
+  <br>
+  <input type="submit" value="Make Dis Student">
+}
