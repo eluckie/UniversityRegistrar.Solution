@@ -1,12 +1,11 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Primitives;
 using Microsoft.AspNetCore.Mvc;
 using UniversityRegistrar.Models;
 using System.Collections.Generic;
 using System.Linq;
 namespace UniversityRegistrar.Controllers;
-
-
 
 public class StudentsController : Controller
 {
@@ -47,6 +46,7 @@ public class StudentsController : Controller
       .Include(thing => thing.Major)
       .Include(thingy=>thingy.Enrollments)
       .ThenInclude(jointhingy=>jointhingy.Course)
+      .ThenInclude(join => join.Department)
       .FirstOrDefault(peep => peep.StudentId == id);
     return View(targetStudent);
   }
@@ -61,12 +61,24 @@ public class StudentsController : Controller
   }
 
   [HttpPost]
-  public ActionResult AddCourses(Course course, int studentId)
+  public ActionResult AddCourses(List<int> wutCourses, int studentId)
   {
+    foreach (int item in wutCourses)
+    {
+      #nullable enable
+      Enrollment? joinEntity = _db.Enrollments.FirstOrDefault(entry => (entry.CourseId == item && entry.StudentId == studentId));
+      #nullable disable
 
-    #nullable enable
-    Enrollment? joinAttempt = _db.Enrollments.FirstOrDefault(join => (join.StudentId == studentId && join.CourseId == course.CourseId));
-    #nullable disable
+      if(joinEntity == null && studentId != 0)
+      {
+        Enrollment newEnrollment = new Enrollment();
+        newEnrollment.CourseId = item;
+        newEnrollment.StudentId = studentId;
+        _db.Enrollments.Add(newEnrollment);
+        // _db.Enrollments.Add(new Enrollment() {CourseId = item, StudentId = studentId});
+        _db.SaveChanges();
+      }
+    }
     return RedirectToAction("Index");
   }
 }
